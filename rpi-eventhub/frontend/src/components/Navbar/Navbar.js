@@ -80,11 +80,11 @@ const Navbar = () => {
           <div className={styles.navIcon} onClick={handleClick}>
             {click ? (
               <span className={styles.icon}>
-                <HamburgerMenuOpen />
+                <HamburgerMenuClose  />
               </span>
             ) : (
               <span className={styles.icon}>
-                <HamburgerMenuClose />
+                <HamburgerMenuOpen />
               </span>
             )}
           </div>

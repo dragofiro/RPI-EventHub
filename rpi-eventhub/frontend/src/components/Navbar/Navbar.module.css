@@ -121,30 +121,49 @@
     transition: all 0.5s ease;
     z-index: 1;
   }
+  .navItem  {
+    opacity: 1;
+    color: #ffffff;
+    border: #000000;
+  }
   .navItem .active {
     color: #ffdd40;
     border: none;
   }
-  .navLinks {
+  .navLinks  {
     padding: 1.5rem;
     width: 100%;
     display: table;
+    color: #00ff00;
+    border: #000000;
+    
+  }
+  .navLinks .active {
+    padding: 1.5rem;
+    width: 100%;
+    display: table;
+    color: #ffffff;
+    border: #000000;
+    
   }
 
   .navLogo .icon {
+    top: 10%;
     width: 2rem;
-    height: 2rem;
+    height: 4rem;
   }
 
   .navIcon {
     display: block;
     position: fixed;
-    top: 50%;
-    right: 0;
+    vertical-align: top;
+
+    top: 2%;
+    right: 4%;
     transform: translate(-100%, -50%);
     width: 2rem;
     height: 2rem;
     cursor: pointer;
-    color: #ffdd40;
+    color: #e85635;
   }
 }
