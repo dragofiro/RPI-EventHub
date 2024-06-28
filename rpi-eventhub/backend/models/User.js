@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
   verificationCode: { type: String, required: false }, // Optional: For storing the email verification code
   likedEvents: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event'
+    ref: 'Event',
+    default: 0
   }]
   // Consider adding an expiry date for the verification code if implementing a timeout feature
 });
@@ -29,5 +30,4 @@ userSchema.pre('save', async function(next) {
 });
 
 const User = mongoose.model('User', userSchema);
-
 module.exports = User;

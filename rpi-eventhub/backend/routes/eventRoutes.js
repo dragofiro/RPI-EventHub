@@ -17,12 +17,10 @@ router.post('/', async (req, res) => {
   const event = new Event({
     title: req.body.title,
     description: req.body.description,
-    // `likes` defaults to 0, so no need to set it here
-    // `creationTimestamp` defaults to now, so no need to set it here
     poster: req.body.poster,
     date: req.body.date,
     location: req.body.location,
-    image: req.body.image, // Make sure you validate this is a proper Imgur URL if needed
+    image: req.body.image,
     tags: req.body.tags,
   });
 
@@ -34,6 +32,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Other CRUD operations (update, delete, etc.)
+
+//Get the likes count
+router.get('/events/:id/likes', async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    res.json({ likes: event.likes });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get likes' });
+  }
+});
+
+//Update the likes count
+router.post('/events/:id/like', async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    event.likes += 1;
+    await event.save();
+    res.json({ likes: event.likes });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update likes' });
+  }
+});
 
 module.exports = router;
