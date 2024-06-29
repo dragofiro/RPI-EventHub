@@ -37,6 +37,21 @@
     gap: 20px;
 }
 
+.my-masonry-grid {
+    display: flex;
+    margin-left: -30px; /* gutter size offset */
+    width: auto;
+  }
+  .my-masonry-grid_column {
+    padding-left: 30px; /* gutter size */
+    background-clip: padding-box;
+  }
+  
+  .my-masonry-grid_column > div { /* child div of the masonry grid column */
+    margin-bottom: 30px;
+  }
+  
+
 /*.event-navigation {*/
 /*    font-size: 24px;*/
 /*    cursor: pointer;*/

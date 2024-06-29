@@ -1,4 +1,5 @@
 import React from 'react';
+import Masonry from 'react-masonry-css';
 import './PopularEvents.css';
 import EventCard from '../EventCard/EventCard';
 
@@ -13,12 +14,20 @@ const events = [
 
 ];
 
+const breakpointColumnsObj = {
+    default: 3,
+    1100: 2,
+    700: 1
+};
+
 function PopularEvents() {
     return (
         <div className="popular-events">
             <h2 className="header2">Popular Events</h2>
-            <div className="events-container">
-                <div className="event-navigation previous">&#8592;</div>
+            <Masonry
+                breakpointCols={breakpointColumnsObj}
+                className="my-masonry-grid"
+                columnClassName="my-masonry-grid_column">
                 {events.map(event => (
                     <EventCard
                         key={event.id}
@@ -27,7 +36,7 @@ function PopularEvents() {
                         description={event.description}
                     />
                 ))}
-                <div className="event-navigation next">&#8594;</div>
+                </Masonry>
             </div>
         </div>
     );

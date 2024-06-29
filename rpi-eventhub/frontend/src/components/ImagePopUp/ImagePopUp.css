@@ -8,6 +8,24 @@
     height: 500px;
     transition: transform 0.3s ease;
    }
+
+   /* Small Size */
+.small .PopUp_image {
+   width: 200px;
+   height: 250px;
+}
+
+/* Medium Size */
+.medium .PopUp_image {
+   width: 400px;
+   height: 500px;
+}
+
+/* Large Size */
+.large .PopUp_image {
+   width: 600px;
+   height: 750px;
+}
    
    .text {
     visibility: hidden;

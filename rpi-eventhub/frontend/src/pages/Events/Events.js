@@ -6,6 +6,7 @@ import PopularEvents from '../../components/EventHomePage/PopularEvents/PopularE
 import Footer from '../../components/Footer/Footer';
 import './Events.css';
 
+
 function Event() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     return (
