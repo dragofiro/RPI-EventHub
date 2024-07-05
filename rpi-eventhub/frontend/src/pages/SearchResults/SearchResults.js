@@ -31,6 +31,7 @@ const SearchResults = () => {
                             width={300}
                             height={450}
                             author={event.poster}
+                            tags={event.tags}
 
                         />
                     ))
