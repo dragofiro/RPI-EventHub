@@ -27,7 +27,7 @@ const ImageCarousel = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('https://rpi-eventhub-production.up.railway.app:5000/events'); // Adjust this to your actual API endpoint
+        const response = await axios.get('https://rpi-eventhub-production.up.railway.app/events'); // Adjust this to your actual API endpoint
         setEvents(response.data.map(event => ({
           src: event.image || placeholderImage, // Use the event image or the placeholder if no image exists
           caption: event.title,

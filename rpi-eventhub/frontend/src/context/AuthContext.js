@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const response = await axios.get('https://rpi-eventhub-production.up.railway.app:5000/verify-token', {
+                    const response = await axios.get('https://rpi-eventhub-production.up.railway.app/verify-token', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

@@ -36,7 +36,7 @@ function VerifyModal() {
       // console.log(email, verificationCode);
 
 
-      const response = await axios.post('https://rpi-eventhub-production.up.railway.app:5000/verify-email', {
+      const response = await axios.post('https://rpi-eventhub-production.up.railway.app/verify-email', {
         email,
         verificationCode,
       }, {

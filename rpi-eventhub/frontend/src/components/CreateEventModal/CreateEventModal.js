@@ -119,7 +119,7 @@ function CreateEventModal() {
       setSuccessOpen(true);
 
     try {
-      const { data } = await axios.post('https://rpi-eventhub-production.up.railway.app:5000/events', formData, {
+      const { data } = await axios.post('https://rpi-eventhub-production.up.railway.app/events', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
