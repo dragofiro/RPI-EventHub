@@ -4,12 +4,9 @@ import axios from 'axios';
 import { useEvents } from '../../context/EventsContext';
 import Snackbar from '@mui/material/Snackbar'; // Import Snackbar from Material-UI
 import CheckIcon from '@mui/icons-material/Check';
-import { TextField } from '@mui/material';
 import { useAuth } from "../../context/AuthContext";
 
 
-const clientId = process.env.REACT_APP_IMGUR_CLIENT_ID;
-const imgBB_API_KEY = process.env.REACT_APP_imgBB_API_KEY;
 
 
 
@@ -25,7 +22,7 @@ function SuccessAlert({ open, handleClose }) {
 
 
 function CreateEventModal() {
-  const [message, setMessage] = useState('');
+  // const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(null); // null means no message, true means success, false means error
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState('');
@@ -35,7 +32,7 @@ function CreateEventModal() {
   const [location, setLocation] = useState('');
   const [tags, setTags] = useState('');
   const [successOpen, setSuccessOpen] = useState(false); // State for success alert
-  const [failureClose, setClose] = useState(false); // State for success alert
+  // const [failureClose, setClose] = useState(false); // State for success alert
   const [errorOpen, setErrorOpen] = useState({});
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,7 +90,7 @@ function CreateEventModal() {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    console.log('username: ', username);
+    // console.log('username: ', username);
     formData.append('poster', username); 
     formData.append('file', file); // Attach the file
     formData.append('date', date);
@@ -122,7 +119,7 @@ function CreateEventModal() {
       setSuccessOpen(true);
 
     try {
-      const { data } = await axios.post('http://localhost:5000/events', formData, {
+      const { data } = await axios.post('https://rpi-eventhub-production.up.railway.app:5000/events', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

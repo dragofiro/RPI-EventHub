@@ -21,8 +21,12 @@ const upload = multer();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://rpi-eventhub-production.up.railway.app/'], // Add your deployed frontend domain here
+  optionsSuccessStatus: 200,
+};
 
+app.use(cors(corsOptions));
 
 const authenticate = async (req, res, next) => {
   try {
@@ -70,8 +74,8 @@ async function testBcrypt() {
   const password = '123'; // Example password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  console.log('Password:', password);
-  console.log('Hashed Password:', hashedPassword);
+  // console.log('Password:', password);
+  // console.log('Hashed Password:', hashedPassword);
 
   const isMatch = await bcrypt.compare(password, hashedPassword);
   console.log('Do they match?', isMatch);
@@ -260,7 +264,7 @@ app.post('/events/:id/like', authenticateAndVerify, async (req, res) => {
 
 app.delete('/events/:id', async (req, res) => {
   const { id } = req.params;
-  console.log("Trying to delete event:", id);
+  // console.log("Trying to delete event:", id);
 
   try {
     const event = await Event.findByIdAndDelete(id);

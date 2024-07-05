@@ -44,7 +44,7 @@ function SignupModal() {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/signup', user);
+      const response = await axios.post('https://rpi-eventhub-production.up.railway.app:5000/signup', user);
       console.log('Signup successful');
       login(response.data.token);  
       localStorage.setItem('token', response.data.token); 

@@ -16,8 +16,8 @@ const EventPoster = ({ id, title, posterSrc, description, author, tags }) => {
   }, [id, deleteEvent]);
 
   const canSeeDeleteButton = (user_name) => {
-    console.log('user_name: ', user_name);
-    console.log('author: ', author);
+    // console.log('user_name: ', user_name);
+    // console.log('author: ', author);
 
     if (user_name === 'admin' || user_name === author) {
       return true;

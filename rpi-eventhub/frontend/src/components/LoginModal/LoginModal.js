@@ -26,7 +26,7 @@ function LoginModal() {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/login', credentials);
+      const response = await axios.post('https://rpi-eventhub-production.up.railway.app:5000/login', credentials);
       console.log('Login successful');
       login(response.data.token);
       handleClose(); // Close the modal on successful login

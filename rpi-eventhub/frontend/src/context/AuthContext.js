@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const response = await axios.get('http://localhost:5000/verify-token', {
+                    const response = await axios.get('https://rpi-eventhub-production.up.railway.app:5000/verify-token', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-      console.log("Username state updated: ", username);
+      // console.log("Username state updated: ", username);
   }, [username]);
 
     return (
