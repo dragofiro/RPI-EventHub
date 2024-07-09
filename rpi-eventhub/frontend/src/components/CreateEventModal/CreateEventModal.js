@@ -69,10 +69,7 @@ function CreateEventModal() {
     let imageUrl = await uploadImage(file);
 
     let errors = {};
-    if (!title) errors.title= true; 
-    if (!description) errors.description = true; 
-    if (!date) errors.date = true;
-    if (!location) errors.location = true;
+  
 
     if (!description || !title || !location || !date) {
       setError('Please fill in all fields. Tags and File are optional!');
@@ -152,7 +149,6 @@ function CreateEventModal() {
                 placeholder="Enter event title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                isInvalid={!title}
               />
             </Form.Group>
 
@@ -165,7 +161,6 @@ function CreateEventModal() {
                 placeholder="Event description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                isInvalid={!description}
               />
             </Form.Group>
 
@@ -184,7 +179,6 @@ function CreateEventModal() {
                 placeholder="Event date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                isInvalid={!date}
               />
             </Form.Group>
 
@@ -196,7 +190,6 @@ function CreateEventModal() {
                 placeholder="Event location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                isInvalid={!location}
               />
             </Form.Group>
 
@@ -221,7 +214,6 @@ function CreateEventModal() {
         </Modal.Footer>
       </Modal>
       <SuccessAlert open={successOpen} handleClose={handleSuccessClose} />
-
     </>
   );
 }
