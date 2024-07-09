@@ -1,3 +1,4 @@
+/* AboutUs.module.css */
 @font-face {
     font-family: "Italiana";
     src: url('../../assets/fonts/Italiana/Italiana-Regular.ttf') format('truetype');
@@ -6,6 +7,8 @@
 .aboutUs {
     text-align: center;
 }
+
+
 
 .footerContainer {
     display: flex;
@@ -144,14 +147,6 @@ a:active {
     flex: 1;
     position: relative;
     top: 10px;
-}
-
-/* circle for profile picture */
-.profilePic {
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
 }
 
 .footer {

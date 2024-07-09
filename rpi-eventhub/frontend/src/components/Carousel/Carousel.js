@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styles from './Carousel.module.css';
+import styles from './Carousel.module.css'; // Import the CSS Module
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from 'axios';
-import { Skeleton } from '@mui/material';
 
-const placeholderImage = 'https://via.placeholder.com/518x671?text=No+Image+Available'; 
+const placeholderImage = 'https://via.placeholder.com/518x671?text=No+Image+Available'; // URL to a default placeholder image
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -23,21 +22,18 @@ const formatDate = (dateString) => {
 const ImageCarousel = () => {
   const [events, setEvents] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const intervalRef = useRef(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/events');
+        const response = await axios.get('http://localhost:5000/events'); // Adjust this to your actual API endpoint
         setEvents(response.data.map(event => ({
-          src: event.image || placeholderImage,
+          src: event.image || placeholderImage, // Use the event image or the placeholder if no image exists
           caption: event.title,
           location: event.location,
-          date: formatDate(event.date),
+          date: formatDate(event.date),// Format date as needed
         })));
-        setIsLoading(false);
-
       } catch (error) {
         console.error('Failed to fetch events:', error);
       }
@@ -64,11 +60,9 @@ const ImageCarousel = () => {
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      resetTimer();
-    }
+    resetTimer();
     return () => clearInterval(intervalRef.current);
-  }, [events, isLoading]);
+  }, [events]);
 
   return (
     <div className="carousel"
@@ -76,13 +70,7 @@ const ImageCarousel = () => {
          onMouseLeave={resetTimer}>
       <div className={styles.carousel}>
         <div className={styles.mainImage}>
-          {isLoading ? (
-            <>
-              <Skeleton variant="rectangular" width={420} height={580} />
-              <Skeleton variant="text" width={300} />
-              <Skeleton variant="text" width={200} />
-            </>
-          ) : events.length > 0 && (
+          {events.length > 0 && (
             <>
               <div className={styles.captionAbove}>{`${events[activeIndex].caption.toUpperCase()}`}</div>
               <img src={events[activeIndex].src} alt={`Slide ${activeIndex}`} />

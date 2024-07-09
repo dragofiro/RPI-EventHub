@@ -7,19 +7,12 @@ function LoginModal() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();  // Destructure the login function from useAuth
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if(isSubmitting) {
-      return;
-    }
-    setIsSubmitting(true);    
-
+  const handleLogin = async () => {
     const credentials = {
       email: email,
       password: password
@@ -28,7 +21,7 @@ function LoginModal() {
     try {
       const response = await axios.post('http://localhost:5000/login', credentials);
       console.log('Login successful');
-      login(response.data.token);
+      login();  // Call login to update the global state
       handleClose(); // Close the modal on successful login
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
@@ -77,7 +70,7 @@ function LoginModal() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleLogin} disabled={isSubmitting}>
+          <Button variant="primary" onClick={handleLogin}>
             Log In
           </Button>
         </Modal.Footer>

@@ -7,11 +7,10 @@ import LoginModal from "../LoginModal/LoginModal";
 import SignupModal from "../SignupModal/SignupModal";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation } from 'react-router-dom';
-import VerifyModal from "../VerifyModal/VerifyModal";
 
 const Navbar = () => {
   const [click, setClick] = useState(false);
-  const { isLoggedIn, emailVerified, logout } = useAuth(); // Destructure emailVerified
+  const { isLoggedIn, logout } = useAuth(); // Destructure isLoggedIn and logout from useAuth
   const location = useLocation();
 
   const handleClick = () => setClick(!click);
@@ -66,11 +65,7 @@ const Navbar = () => {
               <CreateEventModal />
             </li>
               {isLoggedIn ? (
-                <div>
-                    <button onClick={handleLogout} className={`${styles.navItem} btn-danger btn`}>Sign Out</button>
-                    {!emailVerified && <VerifyModal />}
-                </div>
-                
+                <button onClick={handleLogout} className={`${styles.navItem} btn-danger btn`}>Sign Out</button>
               ) : (
                 <>
                   <li className={styles.navItem}>
