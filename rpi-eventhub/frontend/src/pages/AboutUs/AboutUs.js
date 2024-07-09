@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './AboutUs.module.css'; // Import the CSS Module
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import RPIBridgePhoto from '../../assets/RPIBridgePhoto.jpg';
-import ProfilePicImage from '../../assets/ProfilePicImage.svg';
+import { Skeleton } from '@mui/material';
 
 function AboutUs() {
-  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  const [contributors, setContributors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    
+    async function fetchContributors() {
+      try {
+        const response = await fetch('https://api.github.com/repos/MeiH10/RPI-EventHub/contributors');
+        const data = await response.json();
+        setContributors(data);
+        setIsLoading(false);
+
+
+      } catch (error) {
+        console.error('Error fetching contributors:', error);
+      }
+    }
+
+    fetchContributors();
+  }, []);
+
   return (
     <div className={styles.footerContainer}>
       <Navbar />
-      <div className={`containerFluid container-fluid`}>
+      <div className="containerFluid container-fluid">
         <div className="row">
           <div className="col-7 p-5">
             <div className={`${styles.title} text-start ${styles.first}`}>
@@ -37,55 +58,21 @@ function AboutUs() {
         <div className={styles.developers}>
           <h4 className={styles.title}>Developers</h4>
           <div className="row">
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Mei H - Project Lead</h6>
-              <p className={styles.devText}>
-                <a href="mailto:huangm10@rpi.edu" target="_blank" rel="noopener noreferrer">huangm10@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>William F</h6>
-              <p className={styles.devText}>
-                <a href="mailto:fernaw@rpi.edu" target="_blank" rel="noopener noreferrer">fernaw@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Nithin V</h6>
-              <p className={styles.devText}>
-                <a href="mailto:vadakn@rpi.edu" target="_blank" rel="noopener noreferrer">vadakn@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Jordyn Y</h6>
-              <p className={styles.devText}>
-                <a href="mailto:youngj22@rpi.edu" target="_blank" rel="noopener noreferrer">youngj22@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Henry T</h6>
-              <p className={styles.devText}>
-                <a href="mailto:thealh@rpi.edu" target="_blank" rel="noopener noreferrer">thealh@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Hari K</h6>
-              <p className={styles.devText}>
-                <a href="mailto:kimh21@rpi.edu" target="_blank" rel="noopener noreferrer">kimh21@rpi.edu</a>
-              </p>
-            </div>
-            <div className={styles.column}>
-              <img src={ProfilePicImage} height="150" alt="Profile"></img>
-              <h6 className={styles.devText}>Felix T</h6>
-              <p className={styles.devText}>
-                <a href="mailto:tianf2@rpi.edu" target="_blank" rel="noopener noreferrer">tianf2@rpi.edu</a>
-              </p>
-            </div>
+            {isLoading ? (
+              Array.from(new Array(5)).map((_, index) => (
+                <div className={`col-4 ${styles.column}`} key={index}>
+                  <Skeleton variant="circular" width={150} height={150} />
+                  <Skeleton variant="text" width={150} />
+                </div>
+              ))
+            ) : (
+              contributors.map(contributor => (
+                <div className={`col-4 ${styles.column}`} key={contributor.login}>
+                  <img src={contributor.avatar_url} className={styles.profilePic} alt="Profile" />
+                  <h6 className={styles.devText}>{contributor.login}</h6>
+                </div>
+              ))
+            )}
           </div>
         </div>
         <hr className={styles.hr} />
