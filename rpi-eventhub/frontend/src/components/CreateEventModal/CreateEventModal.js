@@ -9,16 +9,6 @@ import { TextField } from '@mui/material';
 const clientId = process.env.REACT_APP_IMGUR_CLIENT_ID;
 const imgBB_API_KEY = process.env.REACT_APP_imgBB_API_KEY;
 
-function SuccessAlert({ open, handleClose }) {
-  return (
-    <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-      <Alert onClose={handleClose} icon={<CheckIcon fontSize="inherit" />} severity="success">
-        Event successfully created!
-      </Alert>
-    </Snackbar>
-  );
-}
-
 
 function CreateEventModal() {
   const [message, setMessage] = useState('');
@@ -30,8 +20,7 @@ function CreateEventModal() {
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
   const [tags, setTags] = useState('');
-  const [successOpen, setSuccessOpen] = useState(false); // State for success alert
-  const [failureClose, setClose] = useState(false); // State for success alert
+  const [success, setSuccess] = useState('');
   const [errorOpen, setErrorOpen] = useState({});
   const [error, setError] = useState('');
 
@@ -40,17 +29,10 @@ function CreateEventModal() {
   const handleClose = () => {
     setShow(false);
     setError('');  // Clear errors when closing modal
+    setSuccess(''); //Clear success message when closing modal
   };
 
   const handleShow = () => setShow(true);
-
-  const handleSuccessClose = () => {
-    setSuccessOpen(false);
-  };
-
-  const handleErrorClose = (field) => {
-    setErrorOpen((prev) => ({ ...prev, [field]: false }));
-  };
 
   const uploadImage = async (imageFile) => {
     const formData = new FormData();
@@ -67,8 +49,6 @@ function CreateEventModal() {
 
   const handleCreateEvent = async () => {
     let imageUrl = await uploadImage(file);
-
-    let errors = {};
   
 
     if (!description || !title || !location || !date) {
@@ -76,9 +56,7 @@ function CreateEventModal() {
       return;
     }
 
-    if (Object.keys(errors).length === 0) {
-      setSuccessOpen(true);
-
+       
       const eventData = {
         title,
         description,
@@ -92,36 +70,18 @@ function CreateEventModal() {
       try {
         const { data } = await axios.post('http://localhost:5000/events', eventData);
         addEvent(data); // Add the new event to the global context
+        setSuccess('Event successfully created!');
+        setSuccess(success.response ? success.response.data : success.message);
         handleClose(); // Close the modal
       } catch (error) {
         //alert("not working");
         console.error('Event creation failed:', error.response ? error.response.data : error.message);
         setError(error.response ? error.response.data : error.message);
-        //setClose(true); // Show success alert
+       // setIsSuccess(null); //If there is an error don't show the success alert.
       }
-    }
+    
   };
 
-  useEffect(() => {
-    if (isSuccess !== null) {
-      const timer = setTimeout(() => {
-        setIsSuccess(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    const timers = Object.keys(errorOpen).map((field) => {
-      if (errorOpen[field]) {
-        return setTimeout(() => {
-          handleErrorClose(field);
-        }, 3000);
-      }
-      return null;
-    });
-    return () => timers.forEach((timer) => timer && clearTimeout(timer));
-  }, [errorOpen]);
 
   return (
     <>
@@ -140,6 +100,7 @@ function CreateEventModal() {
         </Modal.Header>
         <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
           <Form>
             <Form.Group controlId="eventTitle">
               <Form.Label>Title</Form.Label>
@@ -213,7 +174,6 @@ function CreateEventModal() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <SuccessAlert open={successOpen} handleClose={handleSuccessClose} />
     </>
   );
 }
