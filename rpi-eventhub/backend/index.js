@@ -24,7 +24,7 @@ const upload = multer();
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://rpi-eventhub-production.up.railway.app/'],
+  origin: ['http://localhost:3000', 'https://rpi-eventhub-production.up.railway.app/', 'http://rpieventhub.cs.rpi.edu/'],
   optionsSuccessStatus: 200,
 };
 
