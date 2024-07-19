@@ -8,9 +8,17 @@ const eventSchema = new mongoose.Schema({
   poster: { type: String, required: true },
   date: { type: Date, required: true },
   location: { type: String, required: true },
-  image: { type: String }, // Storing the URL to an image hosted on Imgur or similar service
-  tags: [String], // An array of strings to store tags
-});
+  image: {
+    small: { type: String },
+    medium: { type: String },
+    large: { type: String }
+  },
+  tags: [String],
+  time: { type: String, required: true },
+  club: { type: String, required: true },
+  rsvp: { type: String, required: false }
+}, { timestamps: true });
+
 
 const Event = mongoose.model('Event', eventSchema);
 

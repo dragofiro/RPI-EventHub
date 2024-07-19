@@ -1,28 +1,59 @@
 .events-display-container {
     padding: 20px 0 60px 0;
-    width: 100%;
+    width: 100%; /* Set to 100% to use the full width */
     margin: auto;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: 250px;
+    justify-content: space-between; /* Adjusted for consistent spacing */
     gap: 20px;
 }
 
 .event-poster-container {
     position: relative;
     overflow: hidden;
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-    aspect-ratio: auto 3 / 4;
+    width: calc(20% - 20px); /* Five posters per row, accounting for the gap */
+    margin: auto; /* Center the poster if it's smaller than the max-width */
+}
+
+@media (max-width: 1200px) {
+    .event-poster-container {
+        width: calc(25% - 20px); /* Four posters per row on smaller screens */
+    }
+}
+
+@media (max-width: 800px) {
+    .event-poster-container {
+        width: calc(33.333% - 20px); /* Three posters per row on very small screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .event-poster-container {
+        width: calc(50% - 20px); /* Two posters per row on extra small screens */
+    }
+}
+
+@media (max-width: 400px) {
+    .event-poster-container {
+        width: calc(100% - 20px); /* One poster per row on the smallest screens */
+    }
 }
 
 .event-poster-img {
-    width: 100%;
-    height: auto;
+    width: 100%; /* Will scale based on the parent container */
+    height: auto; /* Maintain aspect ratio */
     object-fit: cover;
 }
 
+
+.event-poster-short {
+    grid-row: span 1;
+}
+
+.event-poster-tall {
+    grid-row: span 2;
+}
 
 .event-poster-details {
     position: absolute;
@@ -53,7 +84,7 @@
 }
 
 .event-poster-container:hover .event-poster-img {
-    transform: scale(1.1); /* Slight zoom effect */
+    transform: scale(1.1); 
 }
 
 .event-poster-container:hover .event-poster-details {

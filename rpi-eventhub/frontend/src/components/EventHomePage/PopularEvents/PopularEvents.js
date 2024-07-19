@@ -1,5 +1,4 @@
 import React from 'react';
-import Masonry from 'react-masonry-css';
 import './PopularEvents.css';
 import EventCard from '../EventCard/EventCard';
 
@@ -24,7 +23,6 @@ function PopularEvents() {
     return (
         <div className="popular-events">
             <h2 className="header2">Popular Events</h2>
-            <Masonry
                 breakpointCols={breakpointColumnsObj}
                 className="my-masonry-grid"
                 columnClassName="my-masonry-grid_column">
@@ -36,8 +34,6 @@ function PopularEvents() {
                         description={event.description}
                     />
                 ))}
-                </Masonry>
-            </div>
         </div>
     );
 }
