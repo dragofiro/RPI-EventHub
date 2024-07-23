@@ -1,19 +1,37 @@
 .events-display-container {
-    padding: 20px 0 60px 0;
-    width: 100%;
+    padding: 20px;
+    width: calc(100% - 40px); /* Adjust width to account for padding */
     margin: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-auto-rows: 10px; /* Base row height to help with masonry effect */
+    grid-template-columns: repeat(4, 1fr); /* Set to 4 items per row */
+    grid-auto-rows: auto; /* Adjust row height to content */
     gap: 20px; /* Space between items */
+    justify-content: center; /* Center items in the grid */
+  }
+  
+  @media (max-width: 1200px) {
+    .events-display-container {
+      grid-template-columns: repeat(4, 1fr); /* Adjust for smaller screens */
+    }
+  }
+  
+  @media (max-width: 800px) {
+    .events-display-container {
+      grid-template-columns: repeat(2, 1fr); /* Adjust for smaller screens */
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .events-display-container {
+      grid-template-columns: repeat(1, 1fr); /* Adjust for smaller screens */
+    }
   }
   
   .event-poster-container {
     break-inside: avoid; /* Prevents column break within an item */
     margin-bottom: 20px; /* Space between items */
-    /* background: #fff; For better visibility */
-    /* border: 1px solid #ddd; For better visibility */
     padding-bottom: 20px; /* For better visibility */
+    position: relative; /* Ensure proper positioning of absolute children */
   }
   
   .event-poster-img {
@@ -26,9 +44,8 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: auto;
-    background: rgba(0, 0, 0, 0.5);
-    /* color: white; */
+    height: 100%; /* Cover the entire poster */
+    background: rgba(0, 0, 0, 0.248);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,23 +72,5 @@
   
   .event-poster-container:hover .event-poster-details {
     opacity: 1;
-  }
-  
-  @media (max-width: 1200px) {
-    .events-display-container {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-  }
-  
-  @media (max-width: 800px) {
-    .events-display-container {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .events-display-container {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
   }
   
