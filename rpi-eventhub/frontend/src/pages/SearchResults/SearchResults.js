@@ -24,7 +24,7 @@ const SearchResults = () => {
                 {results.length > 0 ? (
                     results.map(event => (
                         <EventPoster
-                            key={event._id}
+                            id={event._id}
                             title={event.title}
                             posterSrc={event.image || 'https://via.placeholder.com/300x450'}
                             description={event.description}
