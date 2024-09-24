@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Event = require('../models/Event'); // Adjust the path as necessary
+const Event = require("../models/Event"); // Adjust the path as necessary
 
 // Get all events
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const events = await Event.find();
     res.json(events);
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new event
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   const event = new Event({
     title: req.body.title,
     description: req.body.description,
@@ -37,17 +37,41 @@ router.post('/', async (req, res) => {
 // Other CRUD operations (update, delete, etc.)
 
 // Like a new event
-router.put('/events/:id/like', async (req, res) => {
+// router.put('/events/:id/like', async (req, res) => {
+//   try {
+//       const event = await Event.findById(req.params.id);
+//       if (!event) {
+//           return res.status(404).send('Event not found');
+//       }
+//       event.likes += 1;
+//       await event.save();
+//       res.send(event);
+//   } catch (error) {
+//       res.status(500).send('Failed to like event');
+//   }
+// });
+
+app.put("/api/events/:id/like", async (req, res) => {
+  console.log("request", req.body);
+  const { eventId } = req.params;
+  const { liked } = req.body; // Boolean value representing like or unlike
+
   try {
-      const event = await Event.findById(req.params.id);
-      if (!event) {
-          return res.status(404).send('Event not found');
-      }
-      event.likes += 1;
-      await event.save();
-      res.send(event);
+    // Find event by ID
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Increment or decrement the likes based on the 'liked' state
+    event.likes = liked ? event.likes + 1 : event.likes - 1;
+
+    // Save the updated event
+    await event.save();
+
+    res.json({ likes: event.likes });
   } catch (error) {
-      res.status(500).send('Failed to like event');
+    res.status(500).json({ message: "Server error" });
   }
 });
 
