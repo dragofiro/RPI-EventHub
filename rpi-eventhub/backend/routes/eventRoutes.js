@@ -51,28 +51,4 @@ router.post("/", async (req, res) => {
 //   }
 // });
 
-app.put("/api/events/:id/like", async (req, res) => {
-  console.log("request", req.body);
-  const { eventId } = req.params;
-  const { liked } = req.body; // Boolean value representing like or unlike
-
-  try {
-    // Find event by ID
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-
-    // Increment or decrement the likes based on the 'liked' state
-    event.likes = liked ? event.likes + 1 : event.likes - 1;
-
-    // Save the updated event
-    await event.save();
-
-    res.json({ likes: event.likes });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 module.exports = router;

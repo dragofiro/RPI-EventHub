@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./EventCard.module.css";
 import { useAuth } from "../../context/AuthContext";
@@ -44,41 +44,47 @@ const EventCard = ({ event }) => {
   const eventDate = format(formatDateAsEST(event.date), "MMMM do, yyyy");
   const eventTime = formatTime(event.time);
 
-  const [likes, setLikes] = useState(event.likes || 0); // State to track the number of likes
-  const [liked, setLiked] = useState(false); // State to track if the user has liked the event
+  const [likes, setLikes] = useState(event.likes || 0);
+  const [liked, setLiked] = useState(false); // Initially set liked as false
+
+  useEffect(() => {
+    // Fetch user information or check user data to determine if the event is liked
+    const token = localStorage.getItem("token");
+
+    axios
+      .get(`http://localhost:5000/events/${event._id}/like/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setLiked(response.data.liked); // Update the liked state based on the server response
+      })
+      .catch((error) => {
+        console.error("Error fetching like status:", error);
+      });
+  }, [event._id]);
 
   const handleLikeToggle = async () => {
     const newLikedState = !liked; // Toggle the liked state
 
     try {
-      // Send a request to update the like state in the backend
-      // const response = await axios(
-      //   `${config.apiUrl}/events/${event._id}/like`,
-      //   {
-      //     method: "PUT",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({ liked: newLikedState }),
-      //   }
-      // );
-
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${config.apiUrl}/events/${event._id}/like`,
-        { headers: { Authorization: `Bearer ${token}` } },
-        { liked: newLikedState }
+        `http://localhost:5000/events/${event._id}/like`,
+        { liked: newLikedState }, // Send the new like/unlike state
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-
-        // Update the likes and liked state based on the backend response
-        setLikes(data.likes); // Update the likes count from the server
-        setLiked(newLikedState); // Set the new liked state
-      } else {
-        console.error("Failed to update likes on the server");
+      if (response.status === 200) {
+        const data = response.data;
+        setLikes(data.likes); // Update the likes count immediately
+        setLiked(newLikedState); // Toggle the liked state
       }
     } catch (error) {
       console.error("Error while toggling like:", error);

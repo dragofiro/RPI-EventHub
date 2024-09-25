@@ -1,25 +1,23 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const User = require('./models/User');
-const Event = require('./models/Event'); 
-const { sendEmail } = require('./services/emailService');
-const axios = require('axios');
-const FormData = require('form-data');
-const path = require('path');
-const cors = require('cors');
+const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const User = require("./models/User");
+const Event = require("./models/Event");
+const { sendEmail } = require("./services/emailService");
+const axios = require("axios");
+const FormData = require("form-data");
+const path = require("path");
+const cors = require("cors");
 
-const { PDFDocument } = require('pdf-lib');
-const sharp = require('sharp');
-const fs = require('fs');
+const { PDFDocument } = require("pdf-lib");
+const sharp = require("sharp");
+const fs = require("fs");
 const { PDFImage } = require("pdf-image");
 
-
-require('dotenv').config({ path: '.env' });
+require("dotenv").config({ path: ".env" });
 const jwtSecret = process.env.JWT_SECRET;
-
 
 const upload = multer({
   limits: {
@@ -27,22 +25,24 @@ const upload = multer({
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
-      return cb(new Error('Please upload an image file.'));
+      return cb(new Error("Please upload an image file."));
     }
     cb(null, true);
   },
-}).single('file');
-
+}).single("file");
 
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://rpieventhub.com', 'http://localhost:3000'],
+  origin: [
+    "http://localhost:5173",
+    "https://rpieventhub.com",
+    "http://localhost:3000",
+  ],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
 
 const compressImage = async (fileBuffer) => {
   try {
@@ -61,23 +61,22 @@ const compressImage = async (fileBuffer) => {
 
     return compressedBuffer;
   } catch (error) {
-    console.error('Error compressing image:', error);
+    console.error("Error compressing image:", error);
     throw error;
   }
 };
 
-
 const convertPdfToImage = async (pdfBuffer) => {
   try {
-    const tempFilePath = './temp.pdf';
+    const tempFilePath = "./temp.pdf";
     fs.writeFileSync(tempFilePath, pdfBuffer);
 
     const pdfImage = new PDFImage(tempFilePath, {
       combinedImage: true,
       convertOptions: {
         "-resize": "1000x",
-        "-quality": "95"
-      }
+        "-quality": "95",
+      },
     });
 
     const imagePath = await pdfImage.convertPage(0);
@@ -88,14 +87,14 @@ const convertPdfToImage = async (pdfBuffer) => {
 
     return imageBuffer;
   } catch (error) {
-    console.error('Error converting PDF to image:', error);
+    console.error("Error converting PDF to image:", error);
     throw error;
   }
 };
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ _id: decoded.userId });
 
@@ -106,44 +105,44 @@ const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).send({ message: 'Please authenticate.' });
+    res.status(401).send({ message: "Please authenticate." });
   }
 };
 
-
 const authenticateAndVerify = async (req, res, next) => {
   try {
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ _id: decoded.userId });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     if (!user.emailVerified) {
-      return res.status(403).json({ message: 'Please verify your email to perform this action.' });
+      return res
+        .status(403)
+        .json({ message: "Please verify your email to perform this action." });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).send({ message: 'Please authenticate.' });
+    res.status(401).send({ message: "Please authenticate." });
   }
 };
-
-
-
 
 // Middleware
 app.use(express.json()); // for parsing application/json
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI ).then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 
 // Signup Route
-app.post('/signup', async (req, res) => {
+app.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     // Check if the email is already in use
@@ -153,8 +152,10 @@ app.post('/signup', async (req, res) => {
     }
 
     // Generate a 6-digit verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
     const user = new User({
       username,
       email,
@@ -167,45 +168,65 @@ app.post('/signup', async (req, res) => {
     // Send verification email with the code
     sendEmail({
       to: email,
-      subject: 'RPI EventHub Email Verification Code',
+      subject: "RPI EventHub Email Verification Code",
       text: `Dear User,\n\nThank you for registering with RPI EventHub. To complete your email verification, please use the following code:\n\nVerification Code: ${verificationCode}\n\nPlease enter this code in the app to verify your email address.\n\nBest regards,\nRPI EventHub Team`,
     });
 
     // Generate a JWT token
-    const token = jwt.sign({ userId: user._id, email: user.email, emailVerified: user.emailVerified, username: user.username}, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        username: user.username,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
     res.status(201).json({
-      message: "User created successfully. Please check your email to verify your account.",
+      message:
+        "User created successfully. Please check your email to verify your account.",
       token: token,
-      email: user.email, 
-      emailVerified: user.emailVerified
+      email: user.email,
+      emailVerified: user.emailVerified,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error creating user. It's possible that username or email address already exist.", error: error.message });
+    res.status(500).json({
+      message:
+        "Error creating user. It's possible that username or email address already exist.",
+      error: error.message,
+    });
   }
 });
 
-app.post('/verify-email', async (req, res) => {
+app.post("/verify-email", async (req, res) => {
   const { email, verificationCode } = req.body;
 
   try {
     const user = await User.findOne({ email, verificationCode });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or verification code." });
+      return res
+        .status(400)
+        .json({ message: "Invalid email or verification code." });
     }
 
     if (user.verificationCode === verificationCode) {
       user.emailVerified = true;
-      user.verificationCode = '';
+      user.verificationCode = "";
       await user.save();
 
-      const token = jwt.sign({ 
-        userId: user._id, 
-        email: user.email, 
-        emailVerified: user.emailVerified, 
-        username: user.username 
-      }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          username: user.username,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "24h" }
+      );
 
       res.status(200).json({ message: "Email verified successfully.", token });
     } else {
@@ -213,15 +234,14 @@ app.post('/verify-email', async (req, res) => {
     }
   } catch (error) {
     console.error("Error during email verification:", error.message);
-    res.status(500).json({ message: "An error occurred during email verification." });
+    res
+      .status(500)
+      .json({ message: "An error occurred during email verification." });
   }
 });
 
-
 // Login Route
-app.post('/login', async (req, res) => {
-
-  
+app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -233,223 +253,286 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: "Password is incorrect" });
     }
     // Generate a token
-    
-    const token = jwt.sign({ userId: user._id, email: user.email, emailVerified: user.emailVerified, username: user.username  }, jwtSecret, { expiresIn: '24h' });
-    res.status(200).json({ token, userId: user._id, emailVerified: user.emailVerified, message: "Logged in successfully" });
-    
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        username: user.username,
+      },
+      jwtSecret,
+      { expiresIn: "24h" }
+    );
+    res.status(200).json({
+      token,
+      userId: user._id,
+      emailVerified: user.emailVerified,
+      message: "Logged in successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: "Login error", error: error.message });
   }
 });
 
-
-app.post('/events', upload, async (req, res) => {
-  const { title, description, poster, date, location, tags, time, club, rsvp } = req.body;
+app.post("/events", upload, async (req, res) => {
+  const { title, description, poster, date, location, tags, time, club, rsvp } =
+    req.body;
   const file = req.file;
 
   try {
-    let imageUrl = '';
+    let imageUrl = "";
 
     if (file) {
       let imageBuffer;
 
-      if (file.mimetype === 'application/pdf') {
+      if (file.mimetype === "application/pdf") {
         imageBuffer = await convertPdfToImage(file.buffer);
       } else {
         imageBuffer = await compressImage(file.buffer);
       }
 
       const formData = new FormData();
-      formData.append('image', imageBuffer.toString('base64'));
+      formData.append("image", imageBuffer.toString("base64"));
 
-      const response = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.ImgBB_API_KEY}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${process.env.ImgBB_API_KEY}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
+      );
 
       if (response.data && response.data.data && response.data.data.url) {
         imageUrl = response.data.data.url;
       } else {
-        throw new Error('Image upload failed or no URL returned');
+        throw new Error("Image upload failed or no URL returned");
       }
     }
 
     const event = new Event({
       title,
       description,
-      poster: poster || 'admin', // Use 'admin' as the default value
+      poster: poster || "admin", // Use 'admin' as the default value
       date,
       location,
       image: imageUrl,
-      tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+      tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
       time,
       club,
-      rsvp
+      rsvp,
     });
 
     await event.save();
     res.status(201).json(event);
   } catch (error) {
-    console.error('Error creating event:', error);
-    res.status(400).json({ message: 'Error creating event', error: error.message });
+    console.error("Error creating event:", error);
+    res
+      .status(400)
+      .json({ message: "Error creating event", error: error.message });
   }
 });
 
 // Route for fetching all events
-app.get('/events', async (req, res) => {
+app.get("/events", async (req, res) => {
   try {
-      const events = await Event.find();
-      res.status(200).json(events);
+    const events = await Event.find();
+    res.status(200).json(events);
   } catch (error) {
-      res.status(500).json({ message: "Error fetching events", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching events", error: error.message });
   }
 });
 
-
-app.get('/events/:id/like', async (req, res) => {
+app.get("/events/:id/like", async (req, res) => {
   const { id } = req.params;
 
   try {
     const event = await Event.findById(id);
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     res.status(200).json({ likes: event.likes });
-    
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Failed to get like count', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to get like count", error: error.message });
   }
 });
 
-app.get('/events/:id/like/status', authenticate, async (req, res) => {
-  const { id } = req.params; 
-  const user = req.user;
-  
-  try {
-    const event = await Event.findById(id); 
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-
-    const liked = user.likedEvents.includes(id); 
-    res.status(200).json({ liked }); 
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error }); 
-  }
-});
-
-
-
-app.put('/events/:id/like', authenticateAndVerify, async (req, res) => {
+app.get("/events/:id/like/status", authenticate, async (req, res) => {
   const { id } = req.params;
   const user = req.user;
 
   try {
-    console.log('Received like request for event ID:', id);
-    console.log('Authenticated user:', user.username);
-
     const event = await Event.findById(id);
-
     if (!event) {
-      console.log('Event not found');
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
-    if (user.likedEvents.includes(id)) {
-      // User has already liked the event, so unlike it
-      event.likes -= 1;
-      user.likedEvents = user.likedEvents.filter(eventId => eventId.toString() !== id);
+    const liked = user.likedEvents.includes(id);
+    res.status(200).json({ liked });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
 
-      await event.save();
-      await user.save();
+// app.put("/events/:id/like", authenticateAndVerify, async (req, res) => {
+//   const { id } = req.params;
+//   const user = req.user;
 
-      console.log('Event unliked successfully', event.likes);
-      return res.json({ message: 'Event unliked successfully', likes: event.likes });
-    } else {
-      // User has not liked the event yet, so like it
+//   try {
+//     console.log("Received like request for event ID:", id);
+//     console.log("Authenticated user:", user.username);
+
+//     const event = await Event.findById(id);
+
+//     if (!event) {
+//       console.log("Event not found");
+//       return res.status(404).json({ message: "Event not found" });
+//     }
+
+//     if (user.likedEvents.includes(id)) {
+//       // User has already liked the event, so unlike it
+//       event.likes -= 1;
+//       user.likedEvents = user.likedEvents.filter(
+//         (eventId) => eventId.toString() !== id
+//       );
+
+//       await event.save();
+//       await user.save();
+
+//       console.log("Event unliked successfully", event.likes);
+//       return res.json({
+//         message: "Event unliked successfully",
+//         likes: event.likes,
+//       });
+//     } else {
+//       // User has not liked the event yet, so like it
+//       event.likes += 1;
+//       user.likedEvents.push(id);
+
+//       await event.save();
+//       await user.save();
+
+//       console.log("Event liked successfully", event.likes);
+//       return res.json({
+//         message: "Event liked successfully",
+//         likes: event.likes,
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Failed to like event:", error);
+//     res
+//       .status(500)
+//       .json({ message: "Failed to like event", error: error.message });
+//   }
+// });
+
+// app.post("/events/:id/like", authenticateAndVerify, async (req, res) => {
+//   console.log("Hits the post call\n");
+//   const { id } = req.params;
+//   const user = req.user;
+
+//   try {
+//     const event = await Event.findById(id);
+
+//     if (!event) {
+//       return res.status(404).json({ message: "Event not found" });
+//     }
+
+//     // Increment the likes count for the event
+//     event.likes += 1;
+//     await event.save();
+
+//     // Add the event ID to the user's likedEvents array if not already liked
+//     if (!user.likedEvents.includes(id)) {
+//       user.likedEvents.push(id);
+//       await user.save();
+//     }
+
+//     res.json({ message: "Event liked successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .json({ message: "Failed to like event", error: error.message });
+//   }
+// });
+
+app.post("/events/:id/like", authenticateAndVerify, async (req, res) => {
+  console.log("here\n");
+
+  const { id } = req.params; // Use 'id' to match the route parameter
+  const { liked } = req.body;
+  const userId = req.user._id; // Get user ID from the user object
+
+  try {
+    const event = await Event.findById(id);
+    const user = await User.findById(userId); // Fetch the user based on the ID
+
+    if (!event || !user) {
+      return res.status(404).json({ message: "Event or User not found" });
+    }
+
+    // Check if the user has already liked the event
+    const hasLiked = user.likedEvents.includes(id);
+
+    if (liked && !hasLiked) {
+      // User is liking the event, increment likes and add to likedEvents
       event.likes += 1;
-      user.likedEvents.push(id);
-
-      await event.save();
-      await user.save();
-
-      console.log('Event liked successfully', event.likes);
-      return res.json({ message: 'Event liked successfully', likes: event.likes });
+      user.likedEvents.push(id); // Push event ID to likedEvents
+    } else if (!liked && hasLiked) {
+      // User is unliking the event, decrement likes and remove from likedEvents
+      event.likes -= 1;
+      user.likedEvents = user.likedEvents.filter(
+        (eventId) => eventId.toString() !== id
+      );
     }
+
+    await event.save(); // Save updated event
+    await user.save(); // Save updated user
+
+    res.json({ likes: event.likes });
   } catch (error) {
-    console.error('Failed to like event:', error);
-    res.status(500).json({ message: 'Failed to like event', error: error.message });
+    console.error("Error during like/unlike:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-
-
-app.post('/events/:id/like', authenticateAndVerify, async (req, res) => {
-  console.log("Hits the post call\n"); 
-  const { id } = req.params;
-  const user = req.user;
-
-  try {
-    const event = await Event.findById(id);
-
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-
-    // Increment the likes count for the event
-    event.likes += 1;
-    await event.save();
-
-    // Add the event ID to the user's likedEvents array if not already liked
-    if (!user.likedEvents.includes(id)) {
-      user.likedEvents.push(id);
-      await user.save();
-    }
-
-    res.json({ message: 'Event liked successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to like event', error: error.message });
-  }
-});
-
-app.delete('/events/:id', async (req, res) => {
+app.delete("/events/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
     const event = await Event.findByIdAndDelete(id);
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
-    res.status(200).json({ message: 'Event deleted successfully' });
+    res.status(200).json({ message: "Event deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting event', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting event", error: error.message });
   }
 });
 
-
-app.get('/verify-token', authenticate, (req, res) => {
+app.get("/verify-token", authenticate, (req, res) => {
   res.sendStatus(200);
 });
 
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
-
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
