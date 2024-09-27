@@ -10,6 +10,7 @@ const CalendarPage = () => {
   const [weekRange, setWeekRange] = useState({ start: "", end: "" });
   const [events, setEvents] = useState([]);
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
+  const [today, setToday] = useState(new Date());
 
   const parseDateAsEST = (utcDate) => {
     const date = new Date(utcDate);
@@ -76,6 +77,18 @@ const CalendarPage = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
+  const isToday = (day) => {
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+
+    return (
+      day.getDate() === todayDate &&
+      day.getMonth() === todayMonth &&
+      day.getFullYear() === todayYear
+    );
+  };
+
   const filterEventsByDay = (day, firstDayOfWeek, lastDayOfWeek) => {
     return events.filter((event) => {
       const eventDate = parseDateAsEST(event.date);
@@ -101,58 +114,69 @@ const CalendarPage = () => {
                 <button onClick={() => handleWeekChange(-1)}>
                   Previous Week
                 </button>
-                <button onClick={goToToday}>Today</button> {/* New Today button */}
+                <button onClick={goToToday} className={CalendarCSS.todayButton}>
+                  Today
+                </button> {/* Highlighted Today button */}
                 <button onClick={() => handleWeekChange(1)}>Next Week</button>
               </div>
               <h2>
                 Week of {weekRange.start} - {weekRange.end}
               </h2>
               <div className={CalendarCSS.week}>
-                {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-                  <div className={CalendarCSS.day} key={day}>
-                    <h3>
-                      {
-                        [
-                          "Sunday",
-                          "Monday",
-                          "Tuesday",
-                          "Wednesday",
-                          "Thursday",
-                          "Friday",
-                          "Saturday",
-                        ][day]
-                      }
-                    </h3>
-                    {filterEventsByDay(
-                      day,
-                      parseDateAsEST(weekRange.start),
-                      parseDateAsEST(weekRange.end)
-                    ).length > 0 ? (
-                      filterEventsByDay(
-                        day,
+                {[0, 1, 2, 3, 4, 5, 6].map((dayOffset) => {
+                  const day = new Date(currentStartDate);
+                  day.setDate(currentStartDate.getDate() - currentStartDate.getDay() + dayOffset);
+                  return (
+                    <div
+                      className={`${CalendarCSS.day} ${
+                        isToday(day) ? CalendarCSS.highlightedDay : ""
+                      }`}
+                      key={dayOffset}
+                    >
+                      <h3>
+                        {
+                          [
+                            "Sunday",
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                            "Saturday",
+                          ][dayOffset]
+                        }
+                      </h3>
+                      {filterEventsByDay(
+                        dayOffset,
                         parseDateAsEST(weekRange.start),
                         parseDateAsEST(weekRange.end)
-                      ).map((event) => (
-                        <Link to={`/events/${event._id}`} key={event._id}>
-                          <div className={CalendarCSS.eventContainer}>
-                            <h4 className={CalendarCSS.eventTitle}>
-                              {event.title}
-                            </h4>
-                            {event.image && (
-                              <img
-                                src={event.image}
-                                alt={event.title}
-                                className={CalendarCSS.eventImage}
-                              />
-                            )}
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <p>No events</p>
-                    )}
-                  </div>
-                ))}
+                      ).length > 0 ? (
+                        filterEventsByDay(
+                          dayOffset,
+                          parseDateAsEST(weekRange.start),
+                          parseDateAsEST(weekRange.end)
+                        ).map((event) => (
+                          <Link to={`/events/${event._id}`} key={event._id}>
+                            <div className={CalendarCSS.eventContainer}>
+                              <h4 className={CalendarCSS.eventTitle}>
+                                {event.title}
+                              </h4>
+                              {event.image && (
+                                <img
+                                  src={event.image}
+                                  alt={event.title}
+                                  className={CalendarCSS.eventImage}
+                                />
+                              )}
+                            </div>
+                          </Link>
+                        ))
+                      ) : (
+                        <p>No events</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

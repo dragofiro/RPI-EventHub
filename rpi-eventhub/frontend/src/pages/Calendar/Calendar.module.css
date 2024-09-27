@@ -125,6 +125,18 @@
     background-color: #c2405e;
 }
 
+.highlightedDay {
+    background-color: #ffefc1; /* Highlighted background color (light yellow) */
+    border: 2px solid #f39c12; /* Add a border for emphasis */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); /* Add shadow for depth */
+}
+  
+.highlightedDay h3 {
+    color: #f39c12; /* Change text color */
+    font-weight: bold;
+}
+  
+
 /* Adjustments for mobile view */
 @media only screen and (max-width: 600px) {
     .content h1 {
