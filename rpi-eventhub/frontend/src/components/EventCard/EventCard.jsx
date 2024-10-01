@@ -134,9 +134,12 @@ const EventCard = ({ event }) => {
         </div>
       </div>
       <div className={styles.likeContainer}>
-        <button className={styles.likeButton} onClick={handleLikeToggle}>
-          {likes} {likes === 1 ? "Like" : "Likes"}{" "}
-          {/* Display the number of likes */}
+        <button
+          className={`${styles.likeButton} ${liked ? styles.liked : ""}`}
+          onClick={handleLikeToggle}
+        >
+          {likes}
+          <span>{liked ? "❤️" : "🤍"}</span>
         </button>
       </div>
     </div>
