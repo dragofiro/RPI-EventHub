@@ -1,86 +1,77 @@
 /* src/pages/EventDetails/EventDetails.module.css */
 .container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     padding: 20px;
 }
 
 .eventPoster {
     flex: 1;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    max-width: 350px;
+    margin-right: 30px;
 }
 
 .eventPoster img {
     width: 100%;
-    height: auto;
-    border-radius: 15px; /* Rounded corners */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .eventInfo {
     flex: 2;
-    margin-left: 30px;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 20px;
 }
 
-.eventInfo h1 {
-    font-size: 2.5rem; /* Increase font size */
-    margin-bottom: 20px;
-}
-
-.eventInfo h2 {
-    font-size: 2rem; /* Increase font size */
-    margin-bottom: 20px;
-}
-
-.eventInfo p {
-    font-size: 1.25rem; /* Increase font size */
+.eventTitle {
+    font-size: 2.5rem;
+    font-weight: bold;
     margin-bottom: 15px;
+    color: #2c3e50;
 }
 
-@media (min-width: 992px) {
-    .eventPoster {
-        max-width: 600px; 
-    }
-
-    .eventPoster img {
-        max-width: 450px; 
-    }
-
-    .eventInfo {
-        margin-left: 40px;
-    }
+.eventDate, .eventTime, .eventLocation {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
 }
 
-@media (max-width: 767px) {
+.eventDate i, .eventTime i, .eventLocation i {
+    margin-right: 10px;
+    color: #c0392b;
+}
+
+.eventDescription, .eventClub, .eventTags {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 992px) {
     .container {
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        padding: 10px;
+        padding: 15px;
     }
 
     .eventPoster {
         max-width: 100%;
-        margin-right: 0;
         margin-bottom: 20px;
     }
 
-    .eventPoster img {
-        width: 80%;
-        max-width: 300px;
-        height: auto;
-        border-radius: 15px; /* Maintain rounded corners for mobile */
-    }
-
     .eventInfo {
-        margin-left: 0;
-        width: 100%;
+        padding-left: 0;
     }
 
-    .eventInfo p {
-        text-align: left;
-        font-size: 1.1rem; /* Increase font size for smaller screens */
-        margin-bottom: 10px;
+    .eventTitle {
+        text-align: center;
+    }
+
+    .eventDate, .eventTime, .eventLocation {
+        justify-content: center;
     }
 }
