@@ -15,6 +15,7 @@ const CalendarPage = () => {
   const { theme } = useContext(ThemeContext);
   const { isDark } = useColorScheme();
   const calendarRef = useRef(null);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const parseDateAsEST = (utcDate) => {
     const date = new Date(utcDate);
@@ -108,6 +109,7 @@ const CalendarPage = () => {
   };
 
   const captureCalendarScreenshot = async () => {
+    setIsDisabled(true);
     await loadAllImages();
     if (calendarRef.current) {
       html2canvas(calendarRef.current, { useCORS: true }).then((canvas) => {
@@ -118,17 +120,20 @@ const CalendarPage = () => {
         link.click();
       });
     }
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 10000); // Disable for 10 seconds to prevent spam
   };
 
   return (
-    <div className={`outterContainer ${isDark ? 'text-white bg-[#120451]' : 'text-black bg-gradient-to-r from-red-400 via-yellow-200 to-blue-400'}`} data-theme={theme}>
+    <div className={`outerContainer ${isDark ? 'text-white bg-[#120451]' : 'text-black bg-gradient-to-r from-red-400 via-yellow-200 to-blue-400'}`} data-theme={theme}>
       <NavBar />
       <div className={`${CalendarCSS.content} container-fluid containerFluid`}>
         <div className={CalendarCSS.heroSection}>
           <div className={CalendarCSS.title}></div>
 
           <div className={CalendarCSS.buttonWrapper}>
-            <button onClick={captureCalendarScreenshot} className="bg-red-500 text-white p-2 rounded-lg">
+            <button disabled={isDisabled}onClick={captureCalendarScreenshot} className="bg-red-500 text-white p-2 rounded-lg">
               Save Calendar as Image
             </button>
           </div>
