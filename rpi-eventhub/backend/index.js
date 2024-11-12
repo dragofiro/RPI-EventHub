@@ -21,7 +21,24 @@ const jwtSecret = process.env.JWT_SECRET;
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://rpieventhub.com', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://rpieventhub.com'
+    ];
+
+    const regex = /^https:\/\/.*\.github\.dev$/; // Allow dynamic Codespace URLs
+    if (allowedOrigins.includes(origin) || regex.test(origin) || !origin) {
+      callback(null, true);
+    } else {
+      console.log(`Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Use this only if needed
   optionsSuccessStatus: 200,
 };
 
@@ -207,8 +224,12 @@ app.post('/verify-email', async (req, res) => {
 app.post('/resend-verification-code', async (req, res) => {
   const { email } = req.body;
 
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+  
   try { 
-    const user = await user.findOne({email});
+    const user = await User.findOne({email});
 
     if (!user){
       return res.status(404).json({message: "User not found"});
@@ -222,8 +243,8 @@ app.post('/resend-verification-code', async (req, res) => {
     const cooldownPeriod = 30 * 1000;
 
     if (user.lastVerificationEmailSent && now - user.lastVerificationEmailSent < cooldownPeriod){
-      secondsLeft = (cooldownPeriod - (now - user.lastVerificationEmailSent))/1000
-      return res.status(429).json({message: "please wait ${secondsLeft} seconds before trying to resend verification email."})
+      const secondsLeft = (cooldownPeriod - (now - user.lastVerificationEmailSent))/1000
+      return res.status(429).json({message: `please wait ${secondsLeft} seconds before trying to resend verification email.`})
     }
 
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -454,6 +475,7 @@ app.get('/proxy/image/:eventId', async (req, res) => {
     const response = await axios.get(event.image, { responseType: 'arraybuffer' });
     const contentType = response.headers['content-type'];
     res.set('Content-Type', contentType);
+    res.set('Access-Control-Allow-Origin', '*');
     res.send(response.data);
   } catch (error) {
     console.error('Error fetching image:', error.message);

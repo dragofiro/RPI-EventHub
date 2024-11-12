@@ -88,9 +88,9 @@ function VerifyModal() {
           <Button variant="secondary" onClick={handleClose} className={`${styles.button} ${styles.buttonSecondary}`}>
             Close
           </Button>
-          <Button variant="primary" type="submit" onClick={handleVerify} disabled={isSubmitting} 
-                                          className={`${styles.button} ${styles.buttonPrimary}`}>
-            Verify
+          <Button variant="primary" type="submit" disabled={isSubmitting} 
+                    className={`${styles.button} ${styles.buttonPrimary}`}>
+            {isSubmitting ? 'Verifying...' : 'Verify'}
           </Button>
         </Modal.Footer>
       </Modal>
